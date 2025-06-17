@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Quizzes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css"> <!-- Assuming style.css is in a css folder relative to docs/ -->
+    <style>
+        .quiz-list-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+            /* Tailwind gray-50 */
+            border: 1px solid #e5e7eb;
+            /* Tailwind gray-200 */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            text-decoration: none;
+            color: #1f2937;
+            /* Tailwind gray-800 */
+            font-weight: 500;
+            /* font-medium */
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .quiz-list-item:hover {
+            background-color: #eff6ff;
+            /* Tailwind blue-50 */
+            border-color: #93c5fd;
+            /* Tailwind blue-300 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="quiz-header">Available Quizzes</h1>
+        <div id="quiz-list-container" class="mt-8">
+            <!-- Quiz list will be dynamically populated here -->
+        </div>
+    </div>
+    <script src="./js/quiz-manifest.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const quizListContainer = document.getElementById('quiz-list-container');
+            if (typeof allQuizzes !== 'undefined' && allQuizzes.length > 0) {
+                allQuizzes.forEach(quiz => {
+                    const link = document.createElement('a');
+                    link.href = quiz.path;
+                    link.textContent = quiz.title;
+                    link.className = 'quiz-list-item'; // Use the existing style
+                    quizListContainer.appendChild(link);
+                });
+            } else {
+                const noQuizzesMessage = document.createElement('p');
+                noQuizzesMessage.textContent = 'No quizzes available at the moment. Check back soon!';
+                noQuizzesMessage.className = 'text-center text-gray-500';
+                quizListContainer.appendChild(noQuizzesMessage);
+            }
+        });
+    </script>
+</body>
+
+</html>

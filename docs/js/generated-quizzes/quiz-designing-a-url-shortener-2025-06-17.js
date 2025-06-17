@@ -1,158 +1,158 @@
-const quizName = "Designing a URL Shortener Quiz - 2025-06-17";
+const quizName = "Designing a URL Shortener Quiz";
 const quizData = {
     "questions": [
         {
-            "question": "When designing a URL shortener, which method is typically preferred for generating the unique short codes that are both compact and highly unlikely to collide, especially when considering the need for custom short URLs or predictable lengths?",
-            "hint": "Think about converting a unique identifier into a shorter, base-encoded string.",
+            "question": "When designing a URL shortener, which method is generally preferred for generating unique, compact, and collision-resistant short codes that can be easily mapped back to their original IDs?",
+            "hint": "Consider techniques that combine uniqueness with a short, alphanumeric representation.",
             "answerOptions": [
                 {
-                    "text": "MD5 Hashing of the original URL, truncated to 6 characters.",
-                    "rationale": "MD5 hashes are long (128-bit) and difficult to make compact while guaranteeing uniqueness for a short prefix. Truncation significantly increases collision probability.",
+                    "text": "MD5 hashing of the long URL truncated to 6 characters.",
+                    "rationale": "While MD5 provides a hash, truncating it significantly increases the chance of collisions. Also, MD5 is not designed for easy reversibility to an original incrementing ID, which is often used in conjunction with Base62.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Incremental Integer IDs converted to Base62 encoding.",
-                    "rationale": "This is a common and effective strategy. It generates unique, sequential IDs from a centralized or distributed counter, which are then converted to a shorter Base62 string (0-9, a-z, A-Z). This provides compactness, guaranteed uniqueness (from the original ID), and allows for easy custom key reservation.",
+                    "text": "Base62 encoding of a unique, incrementing ID obtained from a distributed ID generator or database sequence.",
+                    "rationale": "This is a widely adopted and effective method. A unique, incrementing ID (e.g., from a database auto-increment or a distributed ID service like Snowflake) ensures uniqueness, and Base62 encoding converts this numeric ID into a compact, alphanumeric string suitable for short codes. This approach minimizes collisions and allows for easy reversibility.",
                     "isCorrect": true
                 },
                 {
-                    "text": "UUIDs (Universally Unique Identifiers).",
-                    "rationale": "While globally unique, standard UUIDs are typically 32 alphanumeric characters long (without hyphens), which is too long for a 'short' URL and inefficient for storage/lookup in this context.",
+                    "text": "Randomly generated UUIDs (Universally Unique Identifiers).",
+                    "rationale": "UUIDs are globally unique, but they are typically 32 hexadecimal characters long (128 bits), which is too long for a compact URL shortener code. While unique, they do not meet the 'compact' requirement.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Randomly generated strings of fixed length (e.g., 6 characters) without collision checking.",
-                    "rationale": "Random strings alone, especially without collision checking against existing keys in the database, have a high probability of collision as the number of URLs grows, leading to broken links or system errors.",
+                    "text": "Using a simple counter and appending a timestamp.",
+                    "rationale": "Appending a timestamp can make codes longer than necessary and might not guarantee uniqueness in a highly concurrent environment without additional coordination. A simple counter alone is prone to concurrency issues.",
                     "isCorrect": false
                 }
             ]
         },
         {
-            "question": "For the primary storage of `short_code` to `long_url` mappings in a high-traffic URL shortener, which type of database is generally most suitable given the primary operation is a simple key-value lookup and high read throughput?",
-            "hint": "Consider the read-heavy nature and the simplicity of the data model.",
+            "question": "What are the absolute minimum required fields for a database table storing URL mappings in a URL shortener to function correctly?",
+            "hint": "Think about the essential pieces of information needed to map a short URL to its original destination.",
             "answerOptions": [
                 {
-                    "text": "Relational Database (e.g., PostgreSQL, MySQL)",
-                    "rationale": "While viable with proper indexing and scaling strategies, relational databases might not be as efficient as NoSQL key-value stores for the extremely high read-heavy, simple lookup pattern typical of a URL shortener at massive scale.",
+                    "text": "`id` (Primary Key), `long_url`, `short_code`, `created_at`",
+                    "rationale": "While `id` and `created_at` are highly recommended for good database design and auditing, they are not strictly necessary for the core mapping functionality. The absolute minimum is the mapping itself.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Graph Database (e.g., Neo4j)",
-                    "rationale": "Graph databases are designed for complex relationships between entities, which is not the primary access pattern for a URL shortener's core mapping (a simple key-value pair).",
-                    "isCorrect": false
-                },
-                {
-                    "text": "Document Database (e.g., MongoDB)",
-                    "rationale": "While flexible, document databases are often overkill for a simple `short_code` -> `long_url` mapping, and may not offer the same raw read performance for this specific pattern as specialized key-value stores.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "NoSQL Key-Value Store (e.g., Redis, DynamoDB)",
-                    "rationale": "Key-Value stores are ideal for this use case due to their extremely fast lookups by key, high scalability for read-heavy workloads, and simplicity in data modeling (short_code as key, long_url as value).",
+                    "text": "`short_code` (Primary Key or Unique Index), `long_url`",
+                    "rationale": "This represents the most fundamental mapping. The `short_code` is what users access, and the `long_url` is where they are redirected. The `short_code` must be unique, typically enforced by a primary key or unique index.",
                     "isCorrect": true
+                },
+                {
+                    "text": "`id`, `long_url`, `short_code`, `user_id`, `expiration_date`",
+                    "rationale": "These fields are useful for extended features (user management, URL expiration) but are not the bare minimum required for the core URL shortening and redirection functionality.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "`short_code`, `target_url`, `click_count`, `last_accessed`",
+                    "rationale": "`click_count` and `last_accessed` are for analytics and not essential for the core mapping. `target_url` is just an alias for `long_url`.",
+                    "isCorrect": false
                 }
             ]
         },
         {
-            "question": "When a user accesses a short URL (e.g., `short.ly/abcde`), which HTTP status code should the URL shortener typically return to redirect the client to the original long URL, assuming the mapping is permanent?",
-            "hint": "Consider SEO implications and client caching behavior for a fixed mapping.",
+            "question": "Which HTTP status code is most appropriate for a URL shortener to redirect a user permanently from a short URL to its original long URL, especially when considering SEO benefits?",
+            "hint": "Consider the implications for search engines and browser caching regarding the 'permanence' of the redirection.",
             "answerOptions": [
-                {
-                    "text": "200 OK",
-                    "rationale": "Returning 200 OK would serve the content of the long URL directly, not redirect the browser. This would prevent the user's browser from updating its location bar to the original long URL.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "302 Found (Temporary Redirect)",
-                    "rationale": "While commonly used, 302 implies the redirection is temporary and the client should continue to use the original short URL for future requests. It prevents browsers/search engines from caching the new location, leading to repeated requests to the shortener.",
-                    "isCorrect": false
-                },
                 {
                     "text": "301 Moved Permanently",
-                    "rationale": "This code indicates that the resource has permanently moved to a new URI. It's preferred for URL shorteners because the mapping is usually fixed, allowing clients (browsers, search engines) to cache the new location and reduce subsequent requests to the shortener, improving performance and SEO.",
+                    "rationale": "A 301 redirect indicates that the resource has been permanently moved to a new URL. This is ideal for URL shorteners as it signals to search engines to pass 'link juice' (SEO value) to the new URL and allows browsers to cache the new mapping, reducing future lookup times.",
                     "isCorrect": true
                 },
                 {
-                    "text": "404 Not Found",
-                    "rationale": "This code indicates the requested resource does not exist, which is incorrect for a valid short URL. It would result in an error page for the user.",
+                    "text": "302 Found (formerly Moved Temporarily)",
+                    "rationale": "A 302 redirect indicates that the resource is temporarily located at a different URI. This is generally not preferred for URL shorteners as it doesn't pass SEO value and clients might not cache the new URL, leading to repeated lookups.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "303 See Other",
+                    "rationale": "A 303 redirect is primarily used after a successful POST request to redirect the client to a different URL (typically via GET) to avoid resubmitting the form. It's not typically used for simple URL shortening redirection and doesn't pass SEO value.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "307 Temporary Redirect",
+                    "rationale": "Similar to 302, a 307 redirect indicates a temporary move and explicitly forbids changing the HTTP method (e.g., from POST to GET). It doesn't pass SEO value and is generally not suitable for permanent URL shortening.",
                     "isCorrect": false
                 }
             ]
         },
         {
-            "question": "If a URL shortener uses a hashing function (e.g., MD5 truncated, or a custom hash) to generate short codes, how is a collision typically handled when a newly generated hash clashes with an existing short code in the database?",
-            "hint": "The goal is to get a unique, working short code for the new long URL without overwriting.",
+            "question": "If a URL shortener uses a hashing function (e.g., MD5 truncated to 6 characters) to generate short codes, how should it handle a collision where a newly generated hash already exists in the database?",
+            "hint": "The goal is to ensure every short code maps to a unique long URL.",
             "answerOptions": [
                 {
-                    "text": "Return an error to the user, asking them to try again with a different long URL.",
-                    "rationale": "This is poor user experience and doesn't solve the underlying collision problem programmatically; the system should handle collisions transparently.",
+                    "text": "Overwrite the existing entry with the new mapping.",
+                    "rationale": "Overwriting an existing entry would break the original short URL, leading to incorrect redirects for existing users. This is unacceptable for a URL shortener.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Truncate the hash to a shorter length to force a new unique value.",
-                    "rationale": "Truncating an already colliding hash would likely exacerbate the collision problem by reducing the possible unique values, not solve it. It would make it even harder to find a unique code.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "Append a small counter or unique salt to the original long URL, re-hash, and retry until unique.",
-                    "rationale": "This is a common and effective strategy. By modifying the input to the hash function (e.g., appending '1', '2', or a random 'salt' to the original long URL), a different hash is produced. The process is repeated until a unique short code is found and confirmed against the database.",
+                    "text": "Generate a new hash (e.g., by appending a random salt to the input URL or an attempt counter) and retry until a unique one is found.",
+                    "rationale": "This is a common and robust strategy. If a collision occurs, modify the input (e.g., add a random string, a timestamp, or an incrementing counter) and re-hash. This process is repeated until a unique short code is generated.",
                     "isCorrect": true
                 },
                 {
-                    "text": "Overwrite the existing short code's mapping with the new long URL.",
-                    "rationale": "This would lead to data loss and break existing short URLs, changing where they redirect, which is unacceptable and would cause massive data integrity issues.",
+                    "text": "Store both mappings under the same short code and resolve at runtime based on user IP.",
+                    "rationale": "A short code must unambiguously map to a single long URL. Storing multiple mappings under the same short code would create ambiguity and complexity in resolution, making the service unreliable.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "Log the collision and return an error to the user, instructing them to try shortening a different URL.",
+                    "rationale": "While logging is good for monitoring, returning an error to the user is a poor user experience. The service should handle collisions transparently and strive to provide a valid short URL.",
                     "isCorrect": false
                 }
             ]
         },
         {
-            "question": "To ensure high availability and scalability of short code generation in a distributed URL shortening system that needs to create millions of new short URLs daily, which approach for generating unique IDs is most robust and efficient?",
-            "hint": "Think about avoiding a single point of failure and minimizing latency during key generation.",
+            "question": "For a URL shortener aiming for extremely high scale, processing millions of short URL creation requests per second, which ID generation strategy would best provide unique, highly available, and potentially time-ordered IDs suitable for encoding into short codes?",
+            "hint": "Think about distributed systems and avoiding single points of failure while generating unique, high-throughput IDs.",
             "answerOptions": [
                 {
-                    "text": "A single, centralized auto-incrementing ID generator.",
-                    "rationale": "This introduces a single point of failure and a significant performance bottleneck. All requests for new IDs must pass through it, severely limiting the system's write throughput and overall availability.",
+                    "text": "Relying solely on database auto-increment primary keys.",
+                    "rationale": "While simple, a single database auto-increment sequence can become a significant bottleneck at extremely high scales, limiting write throughput and introducing a single point of failure.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Generating UUIDs on each application server and using them directly as short codes.",
-                    "rationale": "While UUIDs are globally unique, they are too long (typically 32 characters or more without hyphens) to be practical as 'short' URLs, defeating the purpose of a URL shortener.",
+                    "text": "Using Universally Unique Identifiers (UUIDs) v4 generated by each service instance.",
+                    "rationale": "UUIDs v4 are globally unique and can be generated without central coordination, making them highly available. However, they are not time-ordered (which can impact indexing performance) and are very long (128 bits), requiring significant truncation or making the short code longer than desired if used directly.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Pre-generating a large pool of unique short codes offline and distributing them to application servers.",
-                    "rationale": "This 'key pre-allocation' strategy is highly scalable. Application servers can quickly pick unique codes from a local or distributed pool (e.g., Redis set) without synchronous calls to a central service for each request, making the generation process very fast and fault-tolerant.",
+                    "text": "Implementing a distributed ID generation service like Twitter's Snowflake or a similar custom solution.",
+                    "rationale": "Systems like Snowflake are specifically designed for generating unique, high-throughput, and often time-ordered 64-bit IDs across multiple machines in a distributed environment. These IDs can then be efficiently Base62 encoded into compact short URLs.",
                     "isCorrect": true
                 },
                 {
-                    "text": "Using the current timestamp (with milliseconds) as the short code.",
-                    "rationale": "Timestamps are not guaranteed to be unique, especially in a distributed system, and can easily collide if multiple requests occur within the same millisecond. They also aren't compact in the way 'short codes' are expected to be.",
+                    "text": "Having each server generate random numbers and checking for uniqueness in a distributed cache (e.g., Redis).",
+                    "rationale": "While distributed caches can handle high read/write volume, generating random numbers and then checking for uniqueness creates a 'check-then-act' race condition. It can lead to a high number of collisions and retries at extreme scales, reducing efficiency.",
                     "isCorrect": false
                 }
             ]
         },
         {
-            "question": "A URL shortener needs to support 'custom short URLs' where users can request a specific short code (e.g., `short.ly/mycompany`). What is the primary concern when implementing this feature, beyond just storing the mapping?",
-            "hint": "Think about uniqueness constraints and preventing undesirable behaviors.",
+            "question": "From a traffic pattern perspective, how does a typical URL shortener service generally behave?",
+            "hint": "Consider how often a URL is shortened versus how often the shortened URL is accessed.",
             "answerOptions": [
                 {
-                    "text": "Ensuring the custom short code is a valid URL path (e.g., no special characters).",
-                    "rationale": "While important for URL validity, it's a straightforward validation check and not the *primary* architectural or business concern regarding the feature's core impact on the system's integrity and user experience.",
+                    "text": "Write-heavy, as new URLs are constantly being shortened by users.",
+                    "rationale": "While new URLs are shortened (writes), the frequency of these operations is generally much lower than the frequency of accessing existing short URLs.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Allowing users to choose any short code, even if it conflicts with an existing one.",
-                    "rationale": "This approach would lead to immediate collisions, break existing links, or prevent new links from being created, causing significant data integrity issues and system failures.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "Implementing robust validation and reservation mechanisms to prevent conflicts and squatting.",
-                    "rationale": "This is crucial. Custom short codes must be immediately checked for uniqueness against all existing codes (auto-generated or other custom ones). Additionally, mechanisms are often needed to prevent users from reserving common or desirable codes solely to prevent others from using them (domain squatting), perhaps via a review process or premium feature.",
+                    "text": "Read-heavy, with significantly more requests to resolve (redirect from) short URLs than to create new ones.",
+                    "rationale": "This is the typical pattern. A long URL is shortened once (a write operation), but the resulting short URL can be clicked and accessed thousands, millions, or even billions of times (read operations). This leads to a substantial imbalance favoring reads.",
                     "isCorrect": true
                 },
                 {
-                    "text": "Limiting the length of the custom short code to be extremely short (e.g., 3 characters).",
-                    "rationale": "While length is a design consideration for user experience, forcing extreme brevity increases the chance of collisions with auto-generated codes and makes the uniqueness challenge harder. It's a design constraint, not the primary concern for implementation.",
+                    "text": "Balanced between reads and writes.",
+                    "rationale": "A URL shortener's usage pattern is distinctly imbalanced, with reads far outweighing writes, especially for popular short URLs.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "Sporadic, with unpredictable bursts of both reads and writes throughout the day.",
+                    "rationale": "While bursts can occur, the fundamental ratio of reads to writes remains skewed towards reads in the long term. The service design should account for this read-heavy nature.",
                     "isCorrect": false
                 }
             ]

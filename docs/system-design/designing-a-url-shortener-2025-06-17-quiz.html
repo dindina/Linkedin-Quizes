@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designing a URL Shortener Quiz</title>
+    <title>Designing a URL Shortener</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,10 +14,18 @@
 
 <body>
     <div class="container">
-        <h1 class="quiz-header" id="quiz-header">Designing a URL Shortener Quiz</h1>
+        <h1 class="quiz-header" id="quiz-header">Designing a URL Shortener</h1>
         <div id="quiz-area">
             <div class="quiz-progress" id="progress-indicator"></div>
-            <div class="hint-box" id="hint-display"></div>
+            <div class="hint-container">
+                <button id="hint-toggle-btn" class="hint-toggle-button button-style secondary-button">
+                    <span>Show Hint</span>
+                    <span class="hint-arrow">&#9660;</span>
+                </button>
+                <div id="hint-content" class="hint-box" style="display: none;">
+                    <!-- Hint text will be populated here by JS -->
+                </div>
+            </div>
             <div class="question-text" id="question-display"></div>
             <div id="answer-options-container"></div>
             <div class="quiz-navigation">
@@ -34,6 +42,8 @@
             <p class="text-gray-600 mb-6">Review your answers below:</p>
             <div id="reviewed-answers" class="space-y-6"></div>
             <button id="review-restart-btn" class="primary-button button-style mt-8">Retake Quiz</button>
+            <a href="../all-quizzes.html" id="more-quizzes-btn"
+                class="secondary-button button-style mt-4 inline-block">More Quizzes</a>
         </div>
     </div>
     <script src="../js/generated-quizzes/quiz-designing-a-url-shortener-2025-06-17.js"></script>
