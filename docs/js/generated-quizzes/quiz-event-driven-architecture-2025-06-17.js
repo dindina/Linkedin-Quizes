@@ -2,54 +2,54 @@ const quizName = "Event Driven Architecture Quiz - 2025-06-17";
 const quizData = {
     "questions": [
         {
-            "question": "Which of the following best describes a key advantage of adopting an Event-Driven Architecture (EDA) in a microservices system?",
-            "hint": "Consider how services interact and evolve in an EDA paradigm compared to traditional synchronous communication.",
+            "question": "What is a primary architectural benefit of adopting an Event-Driven Architecture (EDA) compared to a traditional synchronous request-response model for complex, distributed systems?",
+            "hint": "Think about how services interact and their dependencies in an asynchronous message-passing system.",
             "answerOptions": [
                 {
-                    "text": "It enforces strong synchronous coupling between services, ensuring immediate data consistency across all components.",
-                    "rationale": "EDA promotes asynchronous communication and loose coupling, not strong synchronous coupling. Immediate data consistency is often sacrificed for scalability and availability through eventual consistency.",
+                    "text": "It guarantees strict ACID transactions across all microservices, simplifying distributed data management.",
+                    "rationale": "EDA typically promotes eventual consistency rather than strict ACID transactions across distributed services, often requiring more complex compensation logic for data integrity.",
                     "isCorrect": false
                 },
                 {
-                    "text": "It eliminates the need for message brokers by allowing direct HTTP calls between all microservices.",
-                    "rationale": "EDA typically relies heavily on message brokers or event buses to facilitate asynchronous communication and decoupling. Direct HTTP calls are characteristic of a request-response, not a pure event-driven model.",
+                    "text": "It eliminates the need for any form of data replication or caching, reducing infrastructure complexity.",
+                    "rationale": "EDA does not eliminate the need for data replication or caching; in fact, services often maintain local caches or materialized views of data derived from events, which can increase data redundancy.",
                     "isCorrect": false
                 },
                 {
-                    "text": "It significantly increases service decoupling, allowing independent development, deployment, and scaling of microservices.",
-                    "rationale": "This is a primary benefit of EDA. Services communicate implicitly via events, reducing direct dependencies and enabling independent evolution and scaling without impacting other services.",
+                    "text": "It significantly enhances service coupling by allowing direct, synchronous calls between event producers and consumers.",
+                    "rationale": "EDA's core principle is to *decouple* services by introducing an asynchronous event broker, rather than enhancing coupling or enabling direct synchronous calls.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "It improves system resiliency, scalability, and flexibility by asynchronously decoupling services, allowing independent evolution and failure isolation.",
+                    "rationale": "By decoupling services through events, EDA promotes independent deployment and scaling, improves fault tolerance (producer can continue even if consumer is down), and allows services to evolve independently, leading to higher resiliency and flexibility.",
                     "isCorrect": true
-                },
-                {
-                    "text": "It guarantees real-time, ACID-compliant transactions across distributed services without complex coordination.",
-                    "rationale": "EDA often involves eventual consistency rather than strict ACID compliance across distributed services, and achieving transactional integrity in a distributed system still requires careful design (e.g., Saga patterns), it's not 'without complex coordination'.",
-                    "isCorrect": false
                 }
             ]
         },
         {
-            "question": "In an Event-Driven Architecture, what is the primary mechanism for achieving 'eventual consistency' across multiple disparate services reacting to the same business event?",
-            "hint": "Think about how data state propagates in a distributed, asynchronous system, and what guarantees are made over time.",
+            "question": "Which of the following is a common architectural challenge specifically associated with implementing and operating an Event-Driven Architecture (EDA)?",
+            "hint": "Consider the implications of asynchronous communication and distributed state.",
             "answerOptions": [
                 {
-                    "text": "Implementing two-phase commit (2PC) protocols across all event consumers.",
-                    "rationale": "2PC is a protocol for distributed transactions aiming for immediate consistency, which often introduces high latency and reduces availability in highly distributed systems. EDA typically avoids 2PC for scalability.",
+                    "text": "Achieving strong consistency (ACID) across all distributed services without requiring complex compensation patterns.",
+                    "rationale": "EDA often leads to eventual consistency, making strong ACID consistency across multiple services difficult without complex distributed transaction patterns or compensating actions, which is a challenge itself, not a simplification.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Ensuring that all event consumers process events in a strictly sequential, global order.",
-                    "rationale": "While event ordering can be important (e.g., within a specific aggregate or partition), strict global ordering across all events for all consumers is often impractical and not the primary mechanism for eventual consistency. Eventual consistency is about individual services catching up.",
+                    "text": "Simplifying debugging and tracing of end-to-end business processes due to the linear flow of control.",
+                    "rationale": "Debugging and tracing in EDA can be significantly more complex than in synchronous request-response systems, as the flow of control is asynchronous and distributed across multiple services and event hops, making it non-linear.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Each service processes relevant events independently and updates its own local read model, with the expectation that all services will eventually converge to a consistent state.",
-                    "rationale": "This accurately describes how eventual consistency works in EDA. Services react to events asynchronously, update their internal state, and over time, all relevant services will reflect the changes, albeit not instantaneously.",
+                    "text": "Minimizing the impact of consumer failures on event producers due to tight synchronous coupling.",
+                    "rationale": "EDA inherently reduces the impact of consumer failures on producers due to asynchronous decoupling, meaning the producer isn't blocked by the consumer's availability. This is a benefit, not a challenge related to 'tight synchronous coupling'.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "Managing eventual consistency, ensuring correct event ordering, and handling duplicate event processing (idempotency) across distributed consumers.",
+                    "rationale": "These are significant challenges in EDA. Eventual consistency requires careful design for data reconciliation. Maintaining strict event order can be complex across partitions or multiple consumers. Consumers must be designed to be idempotent to safely handle duplicate event deliveries, which are common in distributed messaging systems.",
                     "isCorrect": true
-                },
-                {
-                    "text": "Centralizing all business logic and data into a single, transactional database to avoid distributed state issues.",
-                    "rationale": "This describes a monolithic approach or a highly centralized system, which goes against the distributed and decoupled nature of typical microservices-based Event-Driven Architectures.",
-                    "isCorrect": false
                 }
             ]
         }
