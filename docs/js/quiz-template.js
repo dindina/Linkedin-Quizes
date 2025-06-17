@@ -6,9 +6,13 @@ let quizCompleted = false;
 const quizArea = document.getElementById('quiz-area');
 const resultsArea = document.getElementById('results-area');
 const progressIndicator = document.getElementById('progress-indicator');
-const hintDisplay = document.getElementById('hint-display');
 const questionDisplay = document.getElementById('question-display');
 const answerOptionsContainer = document.getElementById('answer-options-container');
+const hintToggleBtn = document.getElementById('hint-toggle-btn');
+const hintContent = document.getElementById('hint-content');
+const hintToggleText = hintToggleBtn ? hintToggleBtn.querySelector('span:first-child') : null;
+const hintToggleArrow = hintToggleBtn ? hintToggleBtn.querySelector('.hint-arrow') : null;
+
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const submitBtn = document.getElementById('submit-btn');
@@ -31,8 +35,20 @@ function renderQuestion() {
 
     const question = quizData.questions[currentQuestionIndex];
 
+    // Update quiz header if it's the first question and quizName is available
+    if (currentQuestionIndex === 0 && typeof quizName !== 'undefined') {
+        const quizHeader = document.getElementById('quiz-header');
+        if (quizHeader) {
+            quizHeader.textContent = quizName;
+        }
+    }
+
     progressIndicator.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.questions.length}`;
-    hintDisplay.textContent = `Hint: ${question.hint}`;
+    if (hintContent) {
+        hintContent.textContent = question.hint; // Just the hint, "Hint:" can be part of the button or a label
+    }
+    resetHintState(); // Collapse hint for new question
+
     questionDisplay.textContent = question.question;
     answerOptionsContainer.innerHTML = '';
 
@@ -157,7 +173,7 @@ function showResults() {
 
     // Prepare data for submission to Google Form
     const resultsToSubmit = {
-        quiz:quizName,
+        quiz: quizName,
         score: score,
         totalQuestions: quizData.questions.length,
         timestamp: new Date().toISOString()
@@ -192,8 +208,8 @@ async function submitResultsToGoogleForm(data) {
         await fetch(url, {
             method: "POST",
             mode: "no-cors", // Important: Google Forms don't support CORS for direct fetch POSTs from other domains.
-                           // This means your JS won't get a direct success/failure response,
-                           // but the data should still be submitted.
+            // This means your JS won't get a direct success/failure response,
+            // but the data should still be submitted.
             body: formData,
         });
         console.log("Quiz results submission attempted. Please check your Google Sheet.");
@@ -203,6 +219,24 @@ async function submitResultsToGoogleForm(data) {
     }
 }
 
+function resetHintState() {
+    if (hintContent && hintToggleBtn && hintToggleText && hintToggleArrow) {
+        hintContent.style.display = 'none';
+        hintToggleBtn.classList.remove('open');
+        hintToggleText.textContent = 'Show Hint';
+        hintToggleArrow.innerHTML = '&#9660;'; // Down arrow
+    }
+}
+
+if (hintToggleBtn) {
+    hintToggleBtn.addEventListener('click', () => {
+        const isOpen = hintContent.style.display === 'block';
+        hintContent.style.display = isOpen ? 'none' : 'block';
+        hintToggleBtn.classList.toggle('open', !isOpen);
+        hintToggleText.textContent = isOpen ? 'Show Hint' : 'Hide Hint';
+        hintToggleArrow.innerHTML = isOpen ? '&#9660;' : '&#9650;'; // Toggle arrow
+    });
+}
 
 
 function restartQuiz() {
@@ -234,4 +268,9 @@ restartBtn.addEventListener('click', restartQuiz);
 reviewRestartBtn.addEventListener('click', restartQuiz);
 
 // Initial render
-renderQuestion();
+if (typeof quizData !== 'undefined' && quizData.questions && quizData.questions.length > 0) {
+    renderQuestion();
+} else {
+    if (progressIndicator) progressIndicator.textContent = "Quiz loading or no questions available.";
+    console.error("Quiz data is not available or is empty.");
+}

@@ -17,7 +17,15 @@
         <h1 class="quiz-header" id="quiz-header">{{QUIZ_HEADER_TITLE}}</h1>
         <div id="quiz-area">
             <div class="quiz-progress" id="progress-indicator"></div>
-            <div class="hint-box" id="hint-display"></div>
+            <div class="hint-container">
+                <button id="hint-toggle-btn" class="hint-toggle-button button-style secondary-button">
+                    <span>Show Hint</span>
+                    <span class="hint-arrow">&#9660;</span>
+                </button>
+                <div id="hint-content" class="hint-box" style="display: none;">
+                    <!-- Hint text will be populated here by JS -->
+                </div>
+            </div>
             <div class="question-text" id="question-display"></div>
             <div id="answer-options-container"></div>
             <div class="quiz-navigation">
