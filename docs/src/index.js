@@ -1,8 +1,7 @@
-
-
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs').promises;
 const path = require('path');
+const { execSync } = require('child_process');
 
 //const API_KEY = process.env.GEMINI_API_KEY;
 const API_KEY = 'AIzaSyCcDyr8Z-sgWmcmPLHP8tmsPqnFtjg4COw';
@@ -74,6 +73,31 @@ Do not include any text outside of the JSON object itself.
         return null;
     }
 }
+function runGitCommands(commitMessage, newFilePaths) {
+    try {
+        console.log("\n--- Running Git Commands ---");
+
+        // Navigate to the root of your Git repository if necessary.
+        // This assumes your script is run from a location where these relative paths make sense,
+        // or you adjust the CWD (Current Working Directory) for execSync.
+        // For simplicity, let's assume the script's CWD allows direct git operations on the repo.
+        // const repoRoot = path.resolve(__dirname, '..', '..'); // Adjust if your script is deeper
+
+        console.log("Pulling latest changes...");
+        execSync('git pull', { stdio: 'inherit' }); // stdio: 'inherit' shows git output in console
+
+        newFilePaths.forEach(filePath => {
+            execSync(`git add ${filePath}`, { stdio: 'inherit' });
+        });
+        execSync(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+        execSync('git push', { stdio: 'inherit' });
+        console.log("Successfully pushed to GitHub.");
+    } catch (error) {
+        console.error("Error running Git commands:", error.message);
+        console.error("Git command output (if any):", error.stdout?.toString(), error.stderr?.toString());
+        // Decide if you want to throw the error further or handle it (e.g., skip LinkedIn post)
+    }
+}
 
 async function main() {
     const quizTopic = "Rest API Design Principles";
@@ -114,6 +138,13 @@ async function main() {
 
         await fs.writeFile(htmlFilePath, htmlTemplate);
         console.log(`Quiz HTML file saved to ${htmlFilePath}`);
+
+        const gitJsFilePath = path.join('docs', 'js', 'generated-quizzes', `${quizFileName}.js`);
+        const gitHtmlFilePath = path.join('docs', 'system-design', htmlFileName);
+        const commitMessage = `feat: Add new quiz on '${quizTopic}' for ${today}`;
+
+        runGitCommands(commitMessage, [gitJsFilePath, gitHtmlFilePath]);
+
     } else {
         console.log("Failed to generate quiz questions.");
     }

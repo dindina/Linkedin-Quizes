@@ -2,53 +2,53 @@ const quizName = "Rest API Design Principles Quiz - 2025-06-17";
 const quizData = {
     "questions": [
         {
-            "question": "A core principle of REST API design is 'Statelessness.' What does this principle primarily imply for the server's interaction with clients?",
-            "hint": "Consider what kind of information the server should and should not retain about a client's ongoing interaction between individual requests.",
+            "question": "Which of the following HTTP methods is *not* considered idempotent by RESTful API design principles?",
+            "hint": "An idempotent operation is one that can be applied multiple times without changing the result beyond the initial application.",
             "answerOptions": [
                 {
-                    "text": "The server must not store any session state or client context on the server-side between requests.",
-                    "rationale": "Correct. Statelessness dictates that each request from a client to the server must contain all the information necessary to understand the request, and the server should not rely on any stored context from previous requests. This enhances scalability, reliability, and visibility.",
+                    "text": "GET",
+                    "rationale": "GET requests are idempotent because retrieving data multiple times does not change the server's state.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "PUT",
+                    "rationale": "PUT requests are idempotent because placing or updating a resource multiple times with the same data yields the same final state of that resource.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "DELETE",
+                    "rationale": "DELETE requests are idempotent because deleting a resource multiple times results in the resource being gone (the first time it's removed, subsequent times it's already gone, leading to the same final state).",
+                    "isCorrect": false
+                },
+                {
+                    "text": "POST",
+                    "rationale": "POST requests are typically not idempotent because sending the same POST request multiple times often creates multiple identical resources or performs the same action multiple times, leading to different server states.",
                     "isCorrect": true
-                },
-                {
-                    "text": "The server should maintain a persistent, stateful connection with each client throughout their session.",
-                    "rationale": "Incorrect. This describes a stateful interaction, which directly contradicts the stateless principle of REST. REST promotes independent requests to improve scalability and reduce server complexity.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "The server is allowed to cache client-specific data indefinitely to improve performance.",
-                    "rationale": "Incorrect. While caching is a REST principle and can improve performance (for example, caching responses), 'client-specific data' that represents session state and changes the server's behavior per client across requests would violate statelessness. The server must not rely on such state to fulfill a request.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "All API requests must be idempotent to ensure data consistency across multiple calls.",
-                    "rationale": "Incorrect. Idempotency (making the same request multiple times having the same effect as making it once) is a desirable characteristic for certain HTTP methods (like PUT, DELETE) and enhances robustness, but it is not the primary implication of 'Statelessness' for the server's state management. Statelessness facilitates idempotency but isn't defined by it.",
-                    "isCorrect": false
                 }
             ]
         },
         {
-            "question": "When designing RESTful URIs for an API, which of the following is considered a best practice?",
-            "hint": "Focus on how resources should be identified and structured in the URI path, thinking about parts of speech and common conventions.",
+            "question": "When designing a REST API, which of the following is the most aligned with best practices for resource naming in URLs?",
+            "hint": "Think about resources as 'things' rather than 'actions', and how collections of these 'things' should be represented.",
             "answerOptions": [
                 {
-                    "text": "Using verbs in URIs to describe operations (e.g., `/createUser`, `/deleteOrder`).",
-                    "rationale": "Incorrect. REST principles advocate for URIs to identify resources using nouns, and HTTP methods (GET, POST, PUT, DELETE) to describe the operation to be performed on those resources. Verbs in URIs make them less resource-centric and redundant with HTTP methods.",
+                    "text": "Using verbs to describe actions (e.g., `/getUser`, `/createOrder`)",
+                    "rationale": "REST principles advocate for resources to be nouns, and actions to be performed via standard HTTP methods (GET, POST, PUT, DELETE). Using verbs in URLs makes the API less resource-oriented.",
                     "isCorrect": false
                 },
                 {
-                    "text": "Using plural nouns for collections (e.g., `/products`, `/orders`) and singular nouns for specific resources (e.g., `/products/123`).",
-                    "rationale": "Correct. This is a widely accepted best practice for RESTful URI design. Plural nouns represent collections, and appending an identifier (like an ID) targets a specific resource within that collection. This makes URIs intuitive, predictable, and resource-oriented.",
+                    "text": "Using singular nouns for collections (e.g., `/product` for all products)",
+                    "rationale": "While resources are nouns, collections of resources should typically be represented by plural nouns (e.g., `/products`). A singular noun like `/product` would typically refer to a specific instance of a resource.",
+                    "isCorrect": false
+                },
+                {
+                    "text": "Using plural nouns to represent collections of resources (e.g., `/users`, `/products`)",
+                    "rationale": "This is a fundamental REST principle. URLs should represent resources (nouns), and collections of resources are best represented by plural nouns to clearly distinguish them from individual resource instances.",
                     "isCorrect": true
                 },
                 {
-                    "text": "Including API version numbers directly in the URI path (e.g., `/api/v2/users`) for all versions.",
-                    "rationale": "Incorrect. While path versioning is a common practice, it's often debated. Some argue it violates the principle of stable URIs as the URI changes with new versions. Header versioning (e.g., 'Accept' header) or content negotiation is often preferred for maintaining more stable resource identifiers. More importantly, this is about versioning strategy, not intrinsic resource naming convention.",
-                    "isCorrect": false
-                },
-                {
-                    "text": "Using camelCase or PascalCase for URI path segments (e.g., `/userAccounts`, `/ProductOrders`).",
-                    "rationale": "Incorrect. The common convention for URI paths is to use lowercase letters and hyphens (kebab-case) to separate words (e.g., `/user-accounts`, `/product-orders`). This improves readability, avoids case-sensitivity issues on some systems, and aligns with common web URL conventions.",
+                    "text": "Including database table names directly in the URL path (e.g., `/tbl_users`)",
+                    "rationale": "URLs should be abstract and independent of the underlying implementation details like database table names. Exposing internal database structures breaks encapsulation and makes the API less stable to changes in the backend.",
                     "isCorrect": false
                 }
             ]
