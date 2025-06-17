@@ -198,7 +198,8 @@ async function submitResultsToGoogleForm(data) {
         });
         console.log("Quiz results submission attempted. Please check your Google Sheet.");
     } catch (error) {
-        console.error(error.body);
+        // error.body is not accessible with mode: "no-cors"
+        console.error("Error attempting to submit quiz results:", error);
     }
 }
 
