@@ -83,8 +83,27 @@ function runGitCommands(commitMessage, newFilePaths) {
         // For simplicity, let's assume the script's CWD allows direct git operations on the repo.
         // const repoRoot = path.resolve(__dirname, '..', '..'); // Adjust if your script is deeper
 
+        // Check for local changes before stashing
+        const statusOutput = execSync('git status --porcelain').toString();
+        const hasLocalChanges = statusOutput.trim().length > 0;
+
+        if (hasLocalChanges) {
+            console.log("Stashing local changes...");
+            execSync('git stash push -u -m "Auto-stash before automated commit"', { stdio: 'inherit' });
+            // -u includes untracked files, -m adds a message
+        }
+
         console.log("Pulling latest changes...");
         execSync('git pull', { stdio: 'inherit' }); // stdio: 'inherit' shows git output in console
+
+        if (hasLocalChanges) {
+            console.log("Reapplying stashed changes...");
+            // Try to pop the stash. If it fails (e.g., conflicts), it might need manual intervention.
+            // For a fully automated script, you might prefer 'git stash apply' and then handle conflicts,
+            // or ensure the script only generates non-conflicting files.
+            // 'git stash pop' is usually fine if the script is the only thing modifying these files.
+            execSync('git stash pop', { stdio: 'inherit' });
+        }
 
         newFilePaths.forEach(filePath => {
             execSync(`git add ${filePath}`, { stdio: 'inherit' });
@@ -94,13 +113,14 @@ function runGitCommands(commitMessage, newFilePaths) {
         console.log("Successfully pushed to GitHub.");
     } catch (error) {
         console.error("Error running Git commands:", error.message);
-        console.error("Git command output (if any):", error.stdout?.toString(), error.stderr?.toString());
+        // Log the full error object for more details, especially if it's from execSync
+        console.error("Full error details:", error);
         // Decide if you want to throw the error further or handle it (e.g., skip LinkedIn post)
     }
 }
 
 async function main() {
-    const quizTopic = "Event Driven Architecture";
+    const quizTopic = "Load balancers";
     const generatedQuestions = await generateQuizQuestionsNode(quizTopic, 2);
 
     if (generatedQuestions) {
