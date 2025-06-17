@@ -2,9 +2,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
+require('dotenv').config(); // Loads .env file variables if present, export will override for the session
 
-//const API_KEY = process.env.GEMINI_API_KEY;
-const API_KEY = 'AIzaSyCcDyr8Z-sgWmcmPLHP8tmsPqnFtjg4COw';
+const API_KEY = process.env.GEMINI_API_KEY; // Use the environment variable
 if (!API_KEY) {
     throw new Error("GEMINI_API_KEY environment variable not set.");
 }
@@ -120,7 +120,7 @@ function runGitCommands(commitMessage, newFilePaths) {
 }
 
 async function main() {
-    const quizTopic = "Load balancers";
+    const quizTopic = "Quarkus Apps";
     const generatedQuestions = await generateQuizQuestionsNode(quizTopic, 2);
 
     if (generatedQuestions) {
