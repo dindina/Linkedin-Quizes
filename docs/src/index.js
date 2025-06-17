@@ -100,7 +100,7 @@ function runGitCommands(commitMessage, newFilePaths) {
 }
 
 async function main() {
-    const quizTopic = "Rest API Design Principles";
+    const quizTopic = "Event Driven Architecture";
     const generatedQuestions = await generateQuizQuestionsNode(quizTopic, 2);
 
     if (generatedQuestions) {
