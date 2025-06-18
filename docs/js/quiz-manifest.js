@@ -38,6 +38,10 @@ const allQuizzes = [
     {
         "title": "SQL vs NoSQL Databases",
         "path": "./system-design/sql-vs-nosql-databases-2025-06-18-quiz.html"
+    },
+    {
+        "title": "System Metrics to Monitor",
+        "path": "./system-design/system-metrics-to-monitor-2025-06-18-quiz.html"
     }
 ];
 
