@@ -15,3 +15,4 @@ node_modules/dotenv/lib/main.js
 docs/src/config.js
 package.json
 package-lock.json
+docs/src/index-working-after-quiz-manifest-git-issue.js
