@@ -16,6 +16,10 @@ const allQuizzes = [
         "path": "./system-design/event-driven-architecture-2025-06-18-quiz.html"
     },
     {
+        "title": "Idempotency in Distributed Systems",
+        "path": "./system-design/idempotency-in-distributed-systems-2025-06-18-quiz.html"
+    },
+    {
         "title": "Load Balancers",
         "path": "./system-design/load-balancers-2025-06-18-quiz.html"
     },
