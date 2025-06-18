@@ -24,6 +24,10 @@ const allQuizzes = [
         "path": "./system-design/rest-api-design-2025-06-18-quiz.html"
     },
     {
+        "title": "REST API DesignTrade-offs in System Design",
+        "path": "./system-design/rest-api-designtrade-offs-in-system-design-2025-06-18-quiz.html"
+    },
+    {
         "title": "SQL Database Tuning",
         "path": "./system-design/sql-database-tuning-2025-06-18-quiz.html"
     },
