@@ -20,6 +20,10 @@ const allQuizzes = [
         "path": "./system-design/microservices-vs.-monolith-architecture-2025-06-18-quiz.html"
     },
     {
+        "title": "REST API Design",
+        "path": "./system-design/rest-api-design-2025-06-18-quiz.html"
+    },
+    {
         "title": "SQL Database Tuning",
         "path": "./system-design/sql-database-tuning-2025-06-18-quiz.html"
     },
