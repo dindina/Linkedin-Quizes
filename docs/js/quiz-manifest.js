@@ -8,6 +8,10 @@ const allQuizzes = [
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
     {
+        "title": "Design Trade-offs in System Design",
+        "path": "./system-design/design-trade-offs-in-system-design-2025-06-18-quiz.html"
+    },
+    {
         "title": "Event Driven Architecture",
         "path": "./system-design/event-driven-architecture-2025-06-18-quiz.html"
     },
