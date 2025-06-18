@@ -8,6 +8,10 @@ const allQuizzes = [
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
     {
+        "title": "Deployment Strategies",
+        "path": "./system-design/deployment-strategies-2025-06-18-quiz.html"
+    },
+    {
         "title": "Design Trade-offs in System Design",
         "path": "./system-design/design-trade-offs-in-system-design-2025-06-18-quiz.html"
     },
