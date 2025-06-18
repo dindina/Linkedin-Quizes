@@ -8,8 +8,8 @@ const allQuizzes = [
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
     {
-        "title": "Event Driven Arhitecture",
-        "path": "./system-design/event-driven-arhitecture-2025-06-18-quiz.html"
+        "title": "Event Driven Architecture",
+        "path": "./system-design/event-driven-architecture-2025-06-18-quiz.html"
     },
     {
         "title": "Load Balancers",
