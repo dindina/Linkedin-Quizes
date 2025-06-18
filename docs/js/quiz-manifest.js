@@ -1,5 +1,9 @@
 const allQuizzes = [
     {
+        "title": "Caching Strategies",
+        "path": "./system-design/caching-strategies-2025-06-18-quiz.html"
+    },
+    {
         "title": "CAP Theorem",
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
