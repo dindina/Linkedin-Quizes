@@ -48,6 +48,10 @@ const allQuizzes = [
         "path": "./system-design/rest-api-designtrade-offs-in-system-design-2025-06-18-quiz.html"
     },
     {
+        "title": "Scalability vs. Elasticity",
+        "path": "./system-design/scalability-vs.-elasticity-2025-06-18-quiz.html"
+    },
+    {
         "title": "Security in System Design",
         "path": "./system-design/security-in-system-design-2025-06-18-quiz.html"
     },
