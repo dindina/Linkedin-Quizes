@@ -64,6 +64,10 @@ const allQuizzes = [
         "path": "./system-design/scalability-vs.-elasticity-2025-06-18-quiz.html"
     },
     {
+        "title": "Security in Distributed Systems",
+        "path": "./system-design/security-in-distributed-systems-2025-06-21-quiz.html"
+    },
+    {
         "title": "Security in System Design",
         "path": "./system-design/security-in-system-design-2025-06-18-quiz.html"
     },
