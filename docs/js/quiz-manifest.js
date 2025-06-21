@@ -20,6 +20,10 @@ const allQuizzes = [
         "path": "./system-design/design-trade-offs-in-system-design-2025-06-18-quiz.html"
     },
     {
+        "title": "Distributed Caching Invalidation Strategies",
+        "path": "./system-design/distributed-caching-invalidation-strategies-2025-06-21-quiz.html"
+    },
+    {
         "title": "Event Driven Architecture",
         "path": "./system-design/event-driven-architecture-2025-06-18-quiz.html"
     },
