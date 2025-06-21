@@ -24,6 +24,10 @@ const allQuizzes = [
         "path": "./system-design/event-driven-architecture-2025-06-18-quiz.html"
     },
     {
+        "title": "Event Sourcing and CQRS",
+        "path": "./system-design/event-sourcing-and-cqrs-2025-06-21-quiz.html"
+    },
+    {
         "title": "Fault Tolerance",
         "path": "./system-design/fault-tolerance-2025-06-18-quiz.html"
     },
