@@ -8,6 +8,10 @@ const allQuizzes = [
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
     {
+        "title": "Data Pipelines",
+        "path": "./system-design/data-pipelines-2025-06-21-quiz.html"
+    },
+    {
         "title": "Deployment Strategies",
         "path": "./system-design/deployment-strategies-2025-06-18-quiz.html"
     },
