@@ -64,6 +64,10 @@ const allQuizzes = [
         "path": "./system-design/security-in-system-design-2025-06-18-quiz.html"
     },
     {
+        "title": "Serverless Architecture Trade-offs",
+        "path": "./system-design/serverless-architecture-trade-offs-2025-06-21-quiz.html"
+    },
+    {
         "title": "SQL Database Tuning",
         "path": "./system-design/sql-database-tuning-2025-06-18-quiz.html"
     },
