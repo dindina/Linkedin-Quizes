@@ -44,6 +44,10 @@ const allQuizzes = [
         "path": "./system-design/microservices-vs.-monolith-architecture-2025-06-18-quiz.html"
     },
     {
+        "title": "Real-time Analytics Pipeline Design",
+        "path": "./system-design/real-time-analytics-pipeline-design-2025-06-21-quiz.html"
+    },
+    {
         "title": "Resilient Applications",
         "path": "./system-design/resilient-applications-2025-06-18-quiz.html"
     },
