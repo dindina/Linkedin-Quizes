@@ -4,6 +4,10 @@ const allQuizzes = [
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
     {
+        "title": "Conflict Resolution in Eventually Consistent Systems",
+        "path": "./system-design/conflict-resolution-in-eventually-consistent-systems-2025-06-23-quiz.html"
+    },
+    {
         "title": "Data Pipelines",
         "path": "./system-design/data-pipelines-2025-06-21-quiz.html"
     },

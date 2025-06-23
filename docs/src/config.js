@@ -1,5 +1,5 @@
-const quizTopic = "SQL vs NOSql Databases";
-const numQuestions = 10; // Define the number of questions you want to generate
+const quizTopic = "Conflict Resolution in Eventually Consistent Systems";
+const numQuestions = 8; // Define the number of questions you want to generate
 
 module.exports = {
     quizTopic,

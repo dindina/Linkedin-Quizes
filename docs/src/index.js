@@ -324,7 +324,7 @@ async function main() {
         const manifestGitPath = path.join('docs', 'js', 'quiz-manifest.js'); // Relative to repo root
         const commitMessage = `feat: Add new quiz on '${quizTopic}' for ${today}`;
 
-        //runGitCommands(commitMessage, [gitJsFilePath, gitHtmlFilePath, manifestGitPath]);
+        runGitCommands(commitMessage, [gitJsFilePath, gitHtmlFilePath, manifestGitPath]);
 
 
         // --- Post to LinkedIn ---
