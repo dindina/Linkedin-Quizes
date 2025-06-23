@@ -60,6 +60,10 @@ const allQuizzes = [
         "path": "./system-design/rest-api-design-2025-06-18-quiz.html"
     },
     {
+        "title": "Saga Pattern for Distributed Transactions",
+        "path": "./system-design/saga-pattern-for-distributed-transactions-2025-06-23-quiz.html"
+    },
+    {
         "title": "Scalability vs. Elasticity",
         "path": "./system-design/scalability-vs.-elasticity-2025-06-18-quiz.html"
     },
