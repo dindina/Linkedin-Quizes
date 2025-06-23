@@ -8,7 +8,7 @@ const { execSync } = require('child_process'); // Import execSync
 const { quizTopic: configuredQuizTopic, numQuestions: configuredNumQuestions } = require('./config'); // Import from config.js
 require('dotenv').config();
 
-const API_KEY = 'AIzaSyBVNUKsLXZShDNLGnYQfQVyMjCQ4p4rA0g';
+const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
     throw new Error("GOOGLE_API_KEY environment variable not set.");
 }
@@ -25,11 +25,13 @@ async function generateQuizQuestionsNode(topic, numQuestions = 1) {
 
     const prompt = `
 You are an expert quiz question writer specializing in System Design Interview and specfically on the topic "${topic}".
-Generate ${numQuestions} new quiz question(s) on this topic.
+Generate ${numQuestions} new quiz question(s) on this topic. Try to create a balanced mix of difficulties if possible.
+
 For each question, provide:
 1. "question": The question text.
-2. "hint": A helpful hint for the user.
-3. "answerOptions": An array of 4 objects, each with:
+2. "difficulty": An integer from 1 to 3 (1=Easy, 2=Medium, 3=Hard).
+3. "hint": A helpful hint for the user.
+4. "answerOptions": An array of 4 objects, each with:
     a. "text": The answer option text.
     b. "rationale": A brief explanation for why this option is correct or incorrect.
     c. "isCorrect": A boolean value (true for only one option, false for the others).
@@ -39,6 +41,7 @@ Ensure the output is a valid JSON object containing a "questions" array, where e
 Example of a single question object format:
 {
     "question": "Sample question text?",
+    "difficulty": 2,
     "hint": "Sample hint.",
     "answerOptions": [
         {"text": "Option A", "rationale": "Rationale A.", "isCorrect": true},
@@ -321,7 +324,7 @@ async function main() {
         const manifestGitPath = path.join('docs', 'js', 'quiz-manifest.js'); // Relative to repo root
         const commitMessage = `feat: Add new quiz on '${quizTopic}' for ${today}`;
 
-        runGitCommands(commitMessage, [gitJsFilePath, gitHtmlFilePath, manifestGitPath]);
+        //runGitCommands(commitMessage, [gitJsFilePath, gitHtmlFilePath, manifestGitPath]);
 
 
         // --- Post to LinkedIn ---

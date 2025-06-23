@@ -1,9 +1,5 @@
 const allQuizzes = [
     {
-        "title": "Caching Strategies",
-        "path": "./system-design/caching-strategies-2025-06-18-quiz.html"
-    },
-    {
         "title": "CAP Theorem",
         "path": "./system-design/cap-theorem-2025-06-18-quiz.html"
     },
@@ -60,10 +56,6 @@ const allQuizzes = [
         "path": "./system-design/rest-api-design-2025-06-18-quiz.html"
     },
     {
-        "title": "REST API DesignTrade-offs in System Design",
-        "path": "./system-design/rest-api-designtrade-offs-in-system-design-2025-06-18-quiz.html"
-    },
-    {
         "title": "Scalability vs. Elasticity",
         "path": "./system-design/scalability-vs.-elasticity-2025-06-18-quiz.html"
     },
@@ -86,6 +78,10 @@ const allQuizzes = [
     {
         "title": "SQL vs NoSQL Databases",
         "path": "./system-design/sql-vs-nosql-databases-2025-06-18-quiz.html"
+    },
+    {
+        "title": "SQL vs NOSql Databases",
+        "path": "./system-design/sql-vs-nosql-databases-2025-06-23-quiz.html"
     },
     {
         "title": "System Metrics to Monitor",

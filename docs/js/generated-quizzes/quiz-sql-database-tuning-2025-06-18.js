@@ -3,6 +3,7 @@ const quizData = {
     "questions": [
         {
             "question": "In the context of database indexing, which statement accurately describes a clustered index?",
+            "difficulty": 1,
             "hint": "Think about how data is physically stored and ordered on disk.",
             "answerOptions": [
                 {
@@ -29,6 +30,7 @@ const quizData = {
         },
         {
             "question": "A critical first step in diagnosing a slow-running SQL query is typically to use which database tool or command?",
+            "difficulty": 1,
             "hint": "This tool helps you understand the query optimizer's plan for execution.",
             "answerOptions": [
                 {
@@ -55,6 +57,7 @@ const quizData = {
         },
         {
             "question": "If your database frequently performs full table scans and your disk I/O utilization is consistently high, which database configuration parameter would you most likely consider increasing to improve performance?",
+            "difficulty": 2,
             "hint": "This parameter relates to how much data the database can keep in memory to avoid reading from disk.",
             "answerOptions": [
                 {
@@ -81,6 +84,7 @@ const quizData = {
         },
         {
             "question": "When designing a database schema, choosing appropriate data types is crucial for performance. Which of the following is generally the best practice for a column that will store only positive whole numbers up to 1000?",
+            "difficulty": 2,
             "hint": "Smaller data types consume less storage and can be processed faster.",
             "answerOptions": [
                 {
@@ -107,6 +111,7 @@ const quizData = {
         },
         {
             "question": "You have a slow query that uses a correlated subquery in the WHERE clause to filter results based on a condition from another table. Which common optimization technique is most likely to significantly improve its performance?",
+            "difficulty": 3,
             "hint": "Correlated subqueries can be inefficient because they execute once for each row of the outer query.",
             "answerOptions": [
                 {
@@ -133,6 +138,7 @@ const quizData = {
         },
         {
             "question": "To optimize a SELECT query that retrieves only specific columns and uses those same columns in its WHERE clause and ORDER BY clause, what type of index would provide the maximum performance benefit by avoiding a separate table lookup?",
+            "difficulty": 3,
             "hint": "This index type includes all necessary columns to fulfill the query directly from the index structure.",
             "answerOptions": [
                 {

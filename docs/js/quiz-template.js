@@ -1,8 +1,17 @@
-let currentQuestionIndex = 0;
-let userAnswers = new Array(quizData.questions.length).fill(null);
+// --- State for Adaptive Quiz ---
+let questionPools = { 1: [], 2: [], 3: [] }; // Easy, Medium, Hard
+let answeredQuestionIds = new Set();
+let currentSkillLevel = 2; // Start at Medium difficulty
+let currentQuestion = null;
+let totalQuestions = 0;
+let questionsAnsweredCount = 0;
+
+// --- General Quiz State ---
+let userAnswers = {}; // Use an object to store answers by question ID
 let score = 0;
 let quizCompleted = false;
 
+// --- DOM Elements ---
 const quizArea = document.getElementById('quiz-area');
 const resultsArea = document.getElementById('results-area');
 const progressIndicator = document.getElementById('progress-indicator');
@@ -28,26 +37,73 @@ function shuffleArray(array) {
     }
 }
 
-function renderQuestion() {
-    if (currentQuestionIndex < 0 || currentQuestionIndex >= quizData.questions.length) {
-        return;
+function initializeQuiz() {
+    // Reset all state for a new quiz run
+    questionPools = { 1: [], 2: [], 3: [] };
+    answeredQuestionIds = new Set();
+    currentSkillLevel = 2;
+    currentQuestion = null;
+    questionsAnsweredCount = 0;
+    userAnswers = {};
+    score = 0;
+    quizCompleted = false;
+
+    totalQuestions = quizData.questions.length;
+
+    // Populate question pools based on difficulty
+    quizData.questions.forEach((q, index) => {
+        q.id = index; // Assign a unique ID to each question
+        const difficulty = q.difficulty || 2; // Default to medium if not specified
+        if (questionPools[difficulty]) {
+            questionPools[difficulty].push(q);
+        }
+    });
+
+    // Shuffle each difficulty pool to randomize question order within a level
+    Object.values(questionPools).forEach(pool => shuffleArray(pool));
+
+    // Get the first question and render it
+    currentQuestion = getNextQuestion();
+    if (currentQuestion) {
+        renderQuestion(currentQuestion);
+    } else {
+        console.error("No questions available to start the quiz.");
+        progressIndicator.textContent = "No questions found for this quiz.";
     }
+}
 
-    const question = quizData.questions[currentQuestionIndex];
+function getNextQuestion() {
+    // Try to find an unanswered question at the current skill level
+    let pool = questionPools[currentSkillLevel] || [];
+    let nextQuestion = pool.find(q => !answeredQuestionIds.has(q.id));
 
-    // Update quiz header if it's the first question and quizName is available
-    if (currentQuestionIndex === 0 && typeof quizName !== 'undefined') {
-        const quizHeader = document.getElementById('quiz-header');
-        if (quizHeader) {
-            quizHeader.textContent = quizName;
+    // If no questions at current level, try other levels (e.g., easier, then harder)
+    if (!nextQuestion) {
+        const levelsToTry = [currentSkillLevel - 1, currentSkillLevel + 1].filter(l => l >= 1 && l <= 3);
+        for (const level of levelsToTry) {
+            pool = questionPools[level] || [];
+            nextQuestion = pool.find(q => !answeredQuestionIds.has(q.id));
+            if (nextQuestion) break;
         }
     }
 
-    progressIndicator.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.questions.length}`;
-    if (hintContent) {
-        hintContent.textContent = question.hint; // Just the hint, "Hint:" can be part of the button or a label
+    // If still no question, grab any unanswered question from any pool
+    if (!nextQuestion) {
+        for (const level in questionPools) {
+            nextQuestion = questionPools[level].find(q => !answeredQuestionIds.has(q.id));
+            if (nextQuestion) break;
+        }
     }
-    resetHintState(); // Collapse hint for new question
+
+    return nextQuestion;
+}
+
+function renderQuestion(question) {
+    progressIndicator.textContent = `Question ${questionsAnsweredCount + 1} of ${totalQuestions}`;
+    if (hintContent) {
+        hintContent.textContent = question.hint;
+    }
+    resetHintState();
 
     questionDisplay.textContent = question.question;
     answerOptionsContainer.innerHTML = '';
@@ -67,10 +123,10 @@ function renderQuestion() {
         `;
 
         const radioInput = optionDiv.querySelector('input[type="radio"]');
-        radioInput.id = `q${currentQuestionIndex}-option-${index}`; // Unique ID for each radio button
-        optionDiv.querySelector('label').htmlFor = `q${currentQuestionIndex}-option-${index}`; // Link label to unique ID
+        radioInput.id = `q${question.id}-option-${index}`; // Unique ID for each radio button
+        optionDiv.querySelector('label').htmlFor = `q${question.id}-option-${index}`; // Link label to unique ID
 
-        if (userAnswers[currentQuestionIndex] !== null && userAnswers[currentQuestionIndex].selectedIndex === index) {
+        if (userAnswers[question.id] && userAnswers[question.id].selectedIndex === index) {
             radioInput.checked = true;
             optionDiv.classList.add('selected');
         }
@@ -79,7 +135,7 @@ function renderQuestion() {
             radioInput.disabled = true; // Disable radios in review mode
             if (option.isCorrect) {
                 optionDiv.classList.add('correct');
-            } else if (userAnswers[currentQuestionIndex] !== null && userAnswers[currentQuestionIndex].selectedIndex === index && !option.isCorrect) {
+            } else if (userAnswers[question.id] && userAnswers[question.id].selectedIndex === index && !option.isCorrect) {
                 optionDiv.classList.add('incorrect');
             }
             const rationaleText = document.createElement('p');
@@ -88,10 +144,10 @@ function renderQuestion() {
             optionDiv.appendChild(rationaleText);
         } else {
             optionDiv.addEventListener('click', () => {
-                selectAnswer(index);
+                selectAnswer(question, index);
             });
             radioInput.addEventListener('change', () => {
-                selectAnswer(index);
+                selectAnswer(question, index);
             });
         }
         answerOptionsContainer.appendChild(optionDiv);
@@ -100,15 +156,12 @@ function renderQuestion() {
     updateNavigationButtons();
 }
 
-function selectAnswer(selectedIndex) {
-    const currentQuestion = quizData.questions[currentQuestionIndex];
-    // Ensure optionsToRender is correctly mapped back to original answerOptions if shuffled
-    // This requires finding the original option based on text, as index might change due to shuffle
+function selectAnswer(question, selectedIndex) {
+    // Find the original option based on text, as index might change due to shuffle
     const selectedLabelText = answerOptionsContainer.children[selectedIndex].querySelector('label').textContent;
-    const selectedOption = currentQuestion.answerOptions.find(opt => opt.text === selectedLabelText);
+    const selectedOption = question.answerOptions.find(opt => opt.text === selectedLabelText);
 
-
-    userAnswers[currentQuestionIndex] = {
+    userAnswers[question.id] = {
         selectedIndex: selectedIndex, // This index is relative to the potentially shuffled options displayed
         isCorrect: selectedOption.isCorrect,
         questionText: currentQuestion.question,
@@ -124,9 +177,9 @@ function selectAnswer(selectedIndex) {
 }
 
 function updateNavigationButtons() {
-    prevBtn.style.display = currentQuestionIndex > 0 && !quizCompleted ? 'inline-block' : 'none';
-    nextBtn.style.display = currentQuestionIndex < quizData.questions.length - 1 && !quizCompleted ? 'inline-block' : 'none';
-    submitBtn.style.display = currentQuestionIndex === quizData.questions.length - 1 && !quizCompleted ? 'inline-block' : 'none';
+    prevBtn.style.display = 'none'; // 'Previous' button is complex with adaptive logic, so we disable it.
+    nextBtn.style.display = questionsAnsweredCount < totalQuestions - 1 && !quizCompleted ? 'inline-block' : 'none';
+    submitBtn.style.display = questionsAnsweredCount === totalQuestions - 1 && !quizCompleted ? 'inline-block' : 'none';
     restartBtn.style.display = quizCompleted ? 'inline-block' : 'none';
 
     if (quizCompleted) {
@@ -137,7 +190,7 @@ function updateNavigationButtons() {
 }
 
 function calculateScore() {
-    score = userAnswers.filter(answer => answer && answer.isCorrect).length;
+    score = Object.values(userAnswers).filter(answer => answer && answer.isCorrect).length;
 }
 
 function showResults() {
@@ -145,11 +198,11 @@ function showResults() {
     calculateScore();
     quizArea.style.display = 'none';
     resultsArea.style.display = 'block';
-    finalScoreDisplay.textContent = `You scored ${score} out of ${quizData.questions.length}!`;
+    finalScoreDisplay.textContent = `You scored ${score} out of ${totalQuestions}!`;
 
     reviewedAnswersContainer.innerHTML = '';
     quizData.questions.forEach((question, qIndex) => {
-        const userAnswer = userAnswers[qIndex];
+        const userAnswer = userAnswers[question.id];
         const isCorrect = userAnswer ? userAnswer.isCorrect : false;
         const answeredText = userAnswer ? userAnswer.selectedAnswerText : "Not answered";
         const correctAnswerOriginal = question.answerOptions.find(opt => opt.isCorrect);
@@ -175,7 +228,7 @@ function showResults() {
     const resultsToSubmit = {
         quiz: quizName,
         score: score,
-        totalQuestions: quizData.questions.length,
+        totalQuestions: totalQuestions,
         timestamp: new Date().toISOString()
     };
     submitResultsToGoogleForm(resultsToSubmit);
@@ -241,35 +294,50 @@ if (hintToggleBtn) {
 
 function restartQuiz() {
     currentQuestionIndex = 0;
-    userAnswers = new Array(quizData.questions.length).fill(null);
+    userAnswers = new Array(totalQuestions).fill(null);
     score = 0;
     quizCompleted = false;
     quizArea.style.display = 'block';
     resultsArea.style.display = 'none';
-    renderQuestion();
+    initializeQuiz();
 }
 
-prevBtn.addEventListener('click', () => {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        renderQuestion();
+function handleNext() {
+    if (!currentQuestion || userAnswers[currentQuestion.id] === undefined) {
+        // Optional: alert user they must select an answer
+        // For now, we allow proceeding without an answer.
     }
-});
 
-nextBtn.addEventListener('click', () => {
-    if (currentQuestionIndex < quizData.questions.length - 1) {
-        currentQuestionIndex++;
-        renderQuestion();
+    // Adjust skill level based on the last answer
+    if (userAnswers[currentQuestion.id]) {
+        const isCorrect = userAnswers[currentQuestion.id].isCorrect;
+        currentSkillLevel = isCorrect ? Math.min(3, currentSkillLevel + 1) : Math.max(1, currentSkillLevel - 1);
     }
-});
 
-submitBtn.addEventListener('click', showResults);
+    answeredQuestionIds.add(currentQuestion.id);
+    questionsAnsweredCount++;
+
+    if (questionsAnsweredCount >= totalQuestions) {
+        showResults();
+    } else {
+        currentQuestion = getNextQuestion();
+        if (currentQuestion) {
+            renderQuestion(currentQuestion);
+        } else {
+            // Should not happen if counts are correct, but as a fallback:
+            showResults();
+        }
+    }
+}
+
+nextBtn.addEventListener('click', handleNext);
+submitBtn.addEventListener('click', handleNext); // Submit button now also triggers the final 'next' logic
 restartBtn.addEventListener('click', restartQuiz);
 reviewRestartBtn.addEventListener('click', restartQuiz);
 
 // Initial render
 if (typeof quizData !== 'undefined' && quizData.questions && quizData.questions.length > 0) {
-    renderQuestion();
+    initializeQuiz();
 } else {
     if (progressIndicator) progressIndicator.textContent = "Quiz loading or no questions available.";
     console.error("Quiz data is not available or is empty.");
